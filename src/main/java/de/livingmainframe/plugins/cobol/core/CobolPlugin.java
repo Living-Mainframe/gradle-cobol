@@ -7,10 +7,9 @@ import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
-import org.gradle.api.problems.ProblemGroup;
 import org.gradle.api.problems.ProblemId;
 import org.gradle.api.problems.Problems;
-import org.gradle.api.problems.Severity;
+import org.gradle.api.problems.SecondLevelProblemGroup;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
@@ -21,24 +20,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-// The Gradle Problems API is still work in progress and thus marked as incubating / unstable.
-// With the official release of the API the warnings should not be suppressed anymore.
 public abstract class CobolPlugin implements Plugin<Project> {
-
-    public static final ProblemGroup PROBLEM_GROUP = ProblemGroup.create("cobol-base-plugin", "COBOL Base Plugin");
 
     @Inject
     protected abstract Problems getProblems();
 
     @Override
     public void apply(@NotNull Project project) {
-        NamedDomainObjectContainer<ModuleGroup> moduleGroups = project.container(ModuleGroup.class);
+        NamedDomainObjectContainer<ModuleGroup> moduleGroups = project.getObjects().domainObjectContainer(ModuleGroup.class);
         project.getExtensions().add("moduleGroups", moduleGroups);
 
         project.afterEvaluate(target -> configureBuildTasks(target, moduleGroups));
     }
 
     private void configureBuildTasks(Project target, NamedDomainObjectContainer<ModuleGroup> moduleGroups) {
+        SecondLevelProblemGroup problemGroup =
+                getProblems().getGroups().getCompilation().group("COBOL Base Plugin");
         CobolExtensionInterface cobolExtension = (CobolExtensionInterface) target.getExtensions().getByName("cobol");
 
         HashMap<String, ModuleOptions> moduleOptions = new HashMap<>();
@@ -54,38 +51,33 @@ public abstract class CobolPlugin implements Plugin<Project> {
                     target.getLayout().getProjectDirectory().getAsFile().toPath().resolve(sourcePath.toPath());
             File projectSrcDirectory = projectSourcePath.toFile();
             if (!projectSrcDirectory.exists()) {
-                ProblemId problemId = ProblemId.create("src-directory-existence", "The source directory doesn't " +
-                        "exist", PROBLEM_GROUP);
+                ProblemId problemId = problemGroup.problemId("The source directory doesn't exist");
                 throw getProblems().getReporter().throwing(new FileNotFoundException("The source directory doesn't " + "exist"), problemId, problemSpec -> {
                     problemSpec.details(String.format("The source directory %s doesn't exist", projectSourcePath));
                     problemSpec.solution("Make sure that the source directory exists");
-                    problemSpec.severity(Severity.ERROR);
                 });
             }
 
             if (!projectSrcDirectory.isDirectory()) {
-                ProblemId problemId = ProblemId.create("src-directory-is-file", "The source directory is a file",
-                        PROBLEM_GROUP);
+                ProblemId problemId = problemGroup.problemId("The source directory is a file");
                 throw getProblems().getReporter().throwing(new RuntimeException("The source directory is a file"),
                         problemId, problemSpec -> {
                     problemSpec.details(String.format("The source directory %s is a file", projectSourcePath));
                     problemSpec.solution("Only directories can be specified. Specifying individual files is not " +
                             "allowed");
-                    problemSpec.severity(Severity.ERROR);
                 });
             }
 
             File[] filesInSourceDirectory = projectSrcDirectory.listFiles();
 
             if (filesInSourceDirectory == null) {
-                ProblemId problemId = ProblemId.create("src-directory-readability", "A severe error occurred when " +
-                        "trying to read a source directory", PROBLEM_GROUP);
+                ProblemId problemId = problemGroup.problemId("A severe error occurred when " +
+                        "trying to read a source directory");
                 throw getProblems().getReporter().throwing(new RuntimeException("A severe error occurred when trying " +
                         "to read a source directory"), problemId, problemSpec -> {
                     problemSpec.details(String.format("A severe error occurred when trying to read %s",
                             projectSourcePath));
                     problemSpec.solution("The directory exists but cannot be read. This shouldn't happen");
-                    problemSpec.severity(Severity.ERROR);
                 });
             }
 
