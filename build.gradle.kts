@@ -14,11 +14,11 @@ repositories {
 }
 
 dependencies {
-    implementation("commons-io","commons-io","2.22.0")
-    implementation("org.jetbrains", "annotations", "26.1.0")
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", "6.1.3")
-    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "6.1.3")
-    testRuntimeOnly("org.junit.platform", "junit-platform-launcher", "6.1.3")
+    implementation("commons-io:commons-io:2.22.0")
+    implementation("org.jetbrains:annotations:26.1.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:6.1.3")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.1.3")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")
 }
 
 java {
