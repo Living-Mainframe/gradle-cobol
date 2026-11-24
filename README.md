@@ -3,6 +3,17 @@
 Build COBOL programs with Gradle using GnuCOBOL or IBM Enterprise COBOL for z/OS.
 This is an experimental plugin and a learning project. I am hoping to advance this into a mature project that COBOL projects may use as part of their production build.
 
+## Requirements
+
+- JDK 21 or later. The plugin itself is compiled with a Java 21 toolchain.
+
+### z/OS
+
+- IBM Enterprise COBOL 6.4 with the fix for
+  [APAR PH66054](https://www.ibm.com/support/pages/apar/PH66054) applied.
+
+  This allows finding lower-case copybooks when specified in upper-case in the program.
+
 ## Installation
 
 At this point, the plugin can only be included from a local Maven repository. On the same machine that you want to test
