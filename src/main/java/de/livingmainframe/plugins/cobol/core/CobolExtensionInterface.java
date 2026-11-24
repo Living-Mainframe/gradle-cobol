@@ -2,6 +2,7 @@ package de.livingmainframe.plugins.cobol.core;
 
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.MapProperty;
+import org.gradle.api.provider.Property;
 
 import java.nio.file.Path;
 
@@ -45,4 +46,25 @@ public interface CobolExtensionInterface {
      * @return Name of the compiler implementation class
      */
     Class<?> getCobolCompilerClass();
+
+    /**
+     * A list of file extensions which should be considered when identifying programs to build
+     *
+     * @return list of program file extensions
+     */
+    ListProperty<String> getSourceExtensions();
+
+    /**
+     * A list of file extensions which should be considered when identifying copybooks
+     *
+     * @return list of copybook file extensions
+     */
+    ListProperty<String> getCopybookExtensions();
+
+    /**
+     * Source file encoding for all files within the project
+     *
+     * @return source file encoding
+     */
+    Property<String> getSourceEncoding();
 }

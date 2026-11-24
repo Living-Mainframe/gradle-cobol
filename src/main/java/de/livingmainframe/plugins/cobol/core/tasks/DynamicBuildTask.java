@@ -4,6 +4,7 @@ import de.livingmainframe.plugins.cobol.core.compiler.CobolCompilerExecutable;
 import de.livingmainframe.plugins.cobol.core.dsl.ModuleOptions;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.tasks.InputFile;
@@ -43,7 +44,7 @@ public abstract class DynamicBuildTask extends DefaultTask {
     public abstract ConfigurableFileCollection getSourceIncludeDependencies();
 
     @OutputDirectory
-    abstract public RegularFileProperty getOutputDirectory();
+    public abstract DirectoryProperty getOutputDirectory();
 
     public void setCobolCompilerExecutable(Class<?> cobolCompilerExecutableClass) {
         this.cobolCompilerExecutableClass = cobolCompilerExecutableClass;

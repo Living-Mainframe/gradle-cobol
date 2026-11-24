@@ -6,6 +6,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,8 +52,14 @@ public class CobolSourceAnalyzer {
     private static final Pattern execCicsRegexPattern = Pattern.compile(execCicsRegex);
 
     private final File buildFile;
+    private final Charset encoding;
     private boolean analyzeDb2Usage = true;
     private boolean analyzeCicsUsage = true;
+
+
+    public CobolSourceAnalyzer(File buildFile) {
+        this(buildFile, StandardCharsets.UTF_8);
+    }
 
     /**
      * Utility class that scan source files and returns information like dependencies and whether the program uses
@@ -59,15 +67,16 @@ public class CobolSourceAnalyzer {
      *
      * @param buildFile The file handle pointing to the source file
      */
-    public CobolSourceAnalyzer(File buildFile) {
+    public CobolSourceAnalyzer(File buildFile, Charset encoding) {
         this.buildFile = buildFile;
+        this.encoding = encoding;
     }
 
     public SourceCodeAnalysisResult analyzeSource(List<File> sourceIncludeDirectories) {
         SourceCodeAnalysisResult analysisResult = new SourceCodeAnalysisResult();
 
         List<String> sourceDependencyNames = new ArrayList<>();
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(buildFile))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(buildFile, encoding))) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 Matcher copyRegexMatcher = copyRegexPattern.matcher(line);

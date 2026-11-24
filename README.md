@@ -1,13 +1,20 @@
-# Gradle COBOL Plugin #
+# Gradle COBOL Plugin
 
-COBOL continues to power many core and critical applications at banks, insurers, federal agencies (just to name a few).
-Building a COBOL application requires custom scripts or commercial products. To this date no open build system exists 
-which lets one easily build the source into an executable application. This project is going to change this.
+Build COBOL programs with Gradle using GnuCOBOL or IBM Enterprise COBOL for z/OS.
+This is an experimental plugin and a learning project. I am hoping to advance this into a mature project that COBOL projects may use as part of their production build.
 
-This plugin is a work in progress and not suitable for a productive development process. Some initial features exist and
-work and many others are planned.
+## Requirements
 
-## Installation ##
+- JDK 21 or later. The plugin itself is compiled with a Java 21 toolchain.
+
+### z/OS
+
+- IBM Enterprise COBOL 6.4 with the fix for
+  [APAR PH66054](https://www.ibm.com/support/pages/apar/PH66054) applied.
+
+  This allows finding lower-case copybooks when specified in upper-case in the program.
+
+## Installation
 
 At this point, the plugin can only be included from a local Maven repository. On the same machine that you want to test
 the functionality, clone this repository and deploy the plugin to the local repository by running:
@@ -16,15 +23,15 @@ the functionality, clone this repository and deploy the plugin to the local repo
 Once a stable-enough version exists we are going to try to publish it to the Gradle Plugin Portal for easier
 distribution.
 
-## Variants ##
+## Variants
 
 The plugin is built in a way that it should be easy to extend it to different COBOL compilers. For
 testing and local development the GNU COBOL compiler can be used. For that purpose the `gnu-cobol` variant of the plugin
-is created. A version for the IBM Enterprise COBOL for z/OS compiler also exists: `ibm-enterprise-cobol`. 
-The idea is that the core functionality (like identifying dependencies, setting up build tasks, etc.) is coded once. 
+is created. A version for the IBM Enterprise COBOL for z/OS compiler also exists: `ibm-enterprise-cobol`.
+The idea is that the core functionality (like identifying dependencies, setting up build tasks, etc.) is coded once.
 Specifics, like compiler options, executable locations, etc. can be added through the specific variants.
 
-## Usage ##
+## Usage
 
 To use this plugin, create a new Gradle project that contains your COBOl code and apply the plugin in the
 `build.gradle.kts`:
@@ -60,7 +67,7 @@ A build task is generated for each COBOL program:
 `./gradlew build-hellocob`
 
 So far, a `./gradlew build` doesn't work out of the box. This can simply be added by registering the build tasks with
-the base plugin's `assemble` task: 
+the base plugin's `assemble` task:
 ```kotlin
 plugins {
     base
@@ -72,7 +79,7 @@ tasks.named("assemble").configure{
 }
 ```
 
-## Contributing to this Plugin ##
+## Contributing to this Plugin
 
 We value your interest in this project and your contributions are highly welcome. Because this is a new open source
 project and also the first Gradle plugin developed by the original authors, things may not be very smooth in the
@@ -93,7 +100,7 @@ Please always open an issue to discuss your changes first.
 
 Comments and TODOs exist in the source code which hint possible changes that you can work on.
 
-## z/OS and Wazi-as-a-Service Setup ##
+## z/OS and Wazi-as-a-Service Setup
 
 Gradle requires some z/OS-specific configuration to properly function.
 
@@ -114,7 +121,7 @@ This can (and should) be specified in an appropriate `.gitattributes`.
 
 ```shell
 chtag -t -c UTF-8 gradlew
-chtag -t -c ISO8859-1 settings.gradle.kts build.gradle.kts 
+chtag -t -c ISO8859-1 settings.gradle.kts build.gradle.kts
 ```
 
 Gradle takes up more disk space than what is available on Wazi-as-a-Service by default. Thus, it is necessary to create
